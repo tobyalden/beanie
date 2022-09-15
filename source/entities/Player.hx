@@ -11,7 +11,11 @@ import scenes.*;
 
 class Player extends Entity
 {
-    public static inline var SPEED = 100;
+    public static inline var SPEED = 175;
+    public static inline var GRAVITY = 900;
+    public static inline var MAX_FALL_SPEED = 200;
+    public static inline var JUMP_POWER = 200;
+    public static inline var JUMP_CANCEL_POWER = 40;
 
     private var sprite:Spritemap;
     private var velocity:Vector2;
@@ -21,34 +25,51 @@ class Player extends Entity
         mask = new Hitbox(20, 20);
         sprite = new Spritemap("graphics/player.png", 20, 20);
         sprite.add("idle", [0]);
-        sprite.play("idle");
         graphic = sprite;
         velocity = new Vector2();
     }
 
     override public function update() {
-        var heading = new Vector2();
+        movement();
+        animation();
+        super.update();
+    }
+
+    private function movement() {
         if(Input.check("left")) {
-            heading.x = -1;
+            velocity.x = -SPEED;
         }
         else if(Input.check("right")) {
-            heading.x = 1;
+            velocity.x = SPEED;
         }
         else {
-            heading.x = 0;
+            velocity.x = 0;
         }
-        if(Input.check("up")) {
-            heading.y = -1;
-        }
-        else if(Input.check("down")) {
-            heading.y = 1;
+
+        if(isOnGround()) {
+            velocity.y = 0;
+            if(Input.pressed("jump")) {
+                velocity.y = -JUMP_POWER;
+            }
         }
         else {
-            heading.y = 0;
+            var gravity:Float = GRAVITY;
+            if(Math.abs(velocity.y) < JUMP_CANCEL_POWER) {
+                gravity *= 0.5;
+            }
+            velocity.y += gravity * HXP.elapsed;
+            velocity.y = Math.min(velocity.y, MAX_FALL_SPEED);
+            if(Input.released("jump")) {
+                velocity.y = Math.max(velocity.y, -JUMP_CANCEL_POWER);
+            }
         }
-        velocity = heading;
-        velocity.normalize(SPEED);
         moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls"]);
-        super.update();
+    }
+
+    private function animation() {
+    }
+
+    private function isOnGround() {
+        return collide("walls", x, y + 1) != null;
     }
 }

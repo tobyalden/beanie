@@ -11,8 +11,7 @@ import scenes.*;
 class Main extends Engine
 {
     static function main() {
-        //new Main(360, 360);
-        new Main(480, 360);
+        new Main();
     }
 
     override public function init() {
@@ -23,6 +22,7 @@ class Main extends Engine
         Key.define("down", [Key.S, Key.DOWN]);
         Key.define("left", [Key.A, Key.LEFT]);
         Key.define("right", [Key.D, Key.RIGHT]);
+        Key.define("jump", [Key.Z, Key.SPACE]);
 
         if(Gamepad.gamepad(0) != null) {
             defineGamepadInputs(Gamepad.gamepad(0));
