@@ -11,12 +11,13 @@ import scenes.*;
 class Main extends Engine
 {
     static function main() {
-        new Main();
+        //new Main(360, 360);
+        new Main(480, 360);
     }
 
     override public function init() {
         HXP.screen.scaleMode = new UniformScaleMode(UniformScaleType.Expand);
-        HXP.fullscreen = true;
+        //HXP.fullscreen = true;
 
         Key.define("up", [Key.W, Key.UP]);
         Key.define("down", [Key.S, Key.DOWN]);

@@ -9,14 +9,18 @@ import openfl.Assets;
 
 class Level extends Entity
 {
+    public static inline var TILE_SIZE = 10;
+    public static inline var MIN_WIDTH = 360;
+    public static inline var MIN_HEIGHT = 360;
+
     public var entities(default, null):Array<Entity>;
     private var walls:Grid;
     private var tiles:Tilemap;
 
-    public function new(levelName:String) {
+    public function new(fileName:String) {
         super(0, 0);
         type = "walls";
-        loadLevel(levelName);
+        loadFromFile(fileName);
         updateGraphic();
     }
 
@@ -24,30 +28,23 @@ class Level extends Entity
         super.update();
     }
 
-    private function loadLevel(levelName:String) {
-        var levelData = haxe.Json.parse(Assets.getText('levels/${levelName}.json'));
-        for(layerIndex in 0...levelData.layers.length) {
-            var layer = levelData.layers[layerIndex];
-            if(layer.name == "walls") {
-                // Load solid geometry
-                walls = new Grid(levelData.width, levelData.height, layer.gridCellWidth, layer.gridCellHeight);
-                for(tileY in 0...layer.grid2D.length) {
-                    for(tileX in 0...layer.grid2D[0].length) {
-                        walls.setTile(tileX, tileY, layer.grid2D[tileY][tileX] == "1");
-                    }
-                }
-                mask = walls;
-            }
-            else if(layer.name == "entities") {
-                // Load entities
-                entities = new Array<Entity>();
-                for(entityIndex in 0...layer.entities.length) {
-                    var entity = layer.entities[entityIndex];
-                    if(entity.name == "player") {
-                        entities.push(new Player(entity.x, entity.y));
-                    }
-                }
-            }
+    private function loadFromFile(fileName:String) {
+        var xml = new haxe.xml.Access(Xml.parse(Assets.getText('levels/${fileName}.oel')));
+
+        // Load walls
+        walls = new Grid(
+            Std.parseInt(xml.node.level.att.width),
+            Std.parseInt(xml.node.level.att.height),
+            TILE_SIZE,
+            TILE_SIZE
+        );
+        walls.loadFromString(xml.node.level.node.solids.innerData, "", "\n");
+        mask = walls;
+
+        // Load entities
+        entities = new Array<Entity>();
+        for(player in xml.node.level.node.entities.nodes.player) {
+            entities.push(new Player(Std.parseInt(player.att.x), Std.parseInt(player.att.y)));
         }
     }
 
