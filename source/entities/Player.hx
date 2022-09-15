@@ -19,8 +19,8 @@ class Player extends Entity
     public static inline var JUMP_CANCEL_POWER = 40;
     public static inline var FLIGHT_POWER = 1800;
 
-    private var sprite:Spritemap;
     private var velocity:Vector2;
+    private var sprite:Spritemap;
     private var canFly:Bool;
 
     public function new(x:Float, y:Float) {
@@ -83,6 +83,11 @@ class Player extends Entity
     }
 
     private function animation() {
+    }
+
+    public function zeroVelocity() {
+        velocity.x = 0;
+        velocity.y = 0;
     }
 
     private function isOnGround() {
