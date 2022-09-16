@@ -17,11 +17,11 @@ import openfl.Assets;
     public var mapY:Int;
 
     public function toKey():String {
-        return '$mapX-$mapY';
+        return '${mapX}x${mapY}';
     }
 
     static public function fromKey(key:String):MapCoordinates {
-        var parts = key.split('-');
+        var parts = key.split('x');
         return {mapX: Std.parseInt(parts[0]), mapY: Std.parseInt(parts[1])};
     }
 }
@@ -31,35 +31,98 @@ class GameScene extends Scene
     public static inline var DEBUG_MOVE_SPEED = 300;
 
     private var currentCoordinates:MapCoordinates;
+    private var currentLevel:Level;
+    private var levelToUnload:Level = null;
     private var ui:UI;
     private var player:Player;
 
     override public function begin() {
-        currentCoordinates = {mapX: 0, mapY: 0};
+        currentCoordinates = {mapX: 1000, mapY: 1000};
         ui = add(new UI());
         ui.showDebugMessage("GAME START");
-        var level = new Level("level");
-        add(level);
-        for(entity in level.entities) {
-            if(Type.getClass(entity) == Player) {
-                player = cast(entity, Player);
+        loadLevel(currentCoordinates);
+        player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+    }
+
+    override public function update() {
+        camera.x = currentCoordinates.mapX * HXP.width;
+        camera.y = currentCoordinates.mapY * HXP.height;
+        if(levelToUnload != null) {
+            for(entity in levelToUnload.entities) {
+                remove(entity);
             }
+            remove(levelToUnload);
+            levelToUnload = null;
+        }
+        var oldCoordinates:MapCoordinates = {mapX: currentCoordinates.mapX, mapY: currentCoordinates.mapY};
+        currentCoordinates = getCurrentCoordinates();
+        if(isTransition(oldCoordinates) && levelExists(currentCoordinates)) {
+            loadLevel(currentCoordinates);
+        }
+        super.update();
+        debug();
+    }
+
+    public function levelExists(coordinates:MapCoordinates) {
+        return Assets.exists('levels/${coordinates.toKey()}.oel');
+    }
+
+    public function loadLevel(coordinates:MapCoordinates) {
+        var level = new Level(coordinates.toKey());
+        level.offset(coordinates);
+        levelToUnload = currentLevel;
+        currentLevel = add(level);
+        for(entity in currentLevel.entities) {
             add(entity);
         }
     }
 
-    override public function update() {
-        currentCoordinates = getCurrentCoordinates();
-        debug();
-        super.update();
-        camera.x = Math.floor(player.centerX / HXP.width) * HXP.width;
-        camera.y = Math.floor(player.centerY / HXP.height) * HXP.height;
+    public function isTransition(oldCoordinates:MapCoordinates) {
+        if(oldCoordinates.toKey() == currentCoordinates.toKey()) {
+            return false;
+        }
+        return true;
     }
 
     private function debug() {
         ui.roomInfo.text = '[${currentCoordinates.mapX}, ${currentCoordinates.mapY}]';
 
-        player.active = !Key.check(Key.DIGIT_9);
+        var isDebugMoving = Key.check(Key.DIGIT_9) || Key.check(Key.DIGIT_0);
+        if(isDebugMoving) {
+            player.active = false;
+            player.graphic.alpha = 0.8;
+        }
+        else {
+            player.active = true;
+            player.graphic.alpha = 1;
+        }
+
+        // Camera
+        if(Key.check(Key.DIGIT_1)) {
+            camera.scale = 0.33;
+            camera.x = (currentCoordinates.mapX - 1) * HXP.width;
+            camera.y = (currentCoordinates.mapY - 1) * HXP.height;
+        }
+        else {
+            camera.scale = 1;
+        }
+
+        // Debug movement (screen by screen)
+        if(Key.check(Key.DIGIT_0)) {
+            player.zeroVelocity();
+            if(Key.pressed(Key.A)) {
+                player.x -= HXP.width;
+            }
+            if(Key.pressed(Key.D)) {
+                player.x += HXP.width;
+            }
+            if(Key.pressed(Key.W)) {
+                player.y -= HXP.height;
+            }
+            if(Key.pressed(Key.S)) {
+                player.y += HXP.height;
+            }
+        }
 
         // Debug movement (smooth)
         if(Key.check(Key.DIGIT_9)) {
@@ -76,10 +139,6 @@ class GameScene extends Scene
             if(Key.check(Key.S)) {
                 player.y += DEBUG_MOVE_SPEED * HXP.elapsed;
             }
-            player.graphic.alpha = 0.7;
-        }
-        else {
-            player.graphic.alpha = 1;
         }
     }
 

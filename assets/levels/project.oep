@@ -16,7 +16,7 @@
     <Width>480</Width>
     <Height>360</Height>
   </LevelMaximumSize>
-  <Filename>C:\Users\Dell\Desktop\Coding\beanie\assets\levels\project.oep</Filename>
+  <Filename>C:\Users\Underhill\Desktop\GameDev\beanie\assets\levels\project.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -55,8 +55,8 @@
   <EntityDefinitions>
     <EntityDefinition Name="player" Limit="1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
       <Size>
-        <Width>10</Width>
-        <Height>10</Height>
+        <Width>20</Width>
+        <Height>20</Height>
       </Size>
       <Origin>
         <X>0</X>

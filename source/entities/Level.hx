@@ -6,6 +6,7 @@ import haxepunk.graphics.tile.*;
 import haxepunk.masks.*;
 import haxepunk.math.*;
 import openfl.Assets;
+import scenes.GameScene;
 
 class Level extends Entity
 {
@@ -14,6 +15,7 @@ class Level extends Entity
     public static inline var MIN_HEIGHT = 360;
 
     public var entities(default, null):Array<Entity>;
+    public var playerStart(default, null):Vector2 = null;
     private var walls:Grid;
     private var tiles:Tilemap;
 
@@ -44,7 +46,19 @@ class Level extends Entity
         // Load entities
         entities = new Array<Entity>();
         for(player in xml.node.level.node.entities.nodes.player) {
-            entities.push(new Player(Std.parseInt(player.att.x), Std.parseInt(player.att.y)));
+            playerStart = new Vector2(Std.parseInt(player.att.x), Std.parseInt(player.att.y));
+        }
+    }
+
+    public function offset(coordinates:MapCoordinates) {
+        moveTo(coordinates.mapX * HXP.width, coordinates.mapY * HXP.height);
+        for(entity in entities) {
+            entity.x += coordinates.mapX * HXP.width;
+            entity.y += coordinates.mapY * HXP.height;
+        }
+        if(playerStart != null) {
+            playerStart.x += coordinates.mapX * HXP.width;
+            playerStart.y += coordinates.mapY * HXP.height;
         }
     }
 
