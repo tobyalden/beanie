@@ -37,11 +37,27 @@ class GameScene extends Scene
     private var player:Player;
 
     override public function begin() {
+        Data.load(Main.SAVE_FILE_NAME);
         currentCoordinates = {mapX: 1000, mapY: 1000};
         ui = add(new UI());
         ui.showDebugMessage("GAME START");
         loadLevel(currentCoordinates);
         player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+
+        var savedCoordinates = Data.read("playerCoordinates");
+        var savedPosition = Data.read("playerPosition");
+        if(savedCoordinates != null && savedPosition != null) {
+            currentCoordinates = {mapX: savedCoordinates.mapX, mapY: savedCoordinates.mapY};
+            loadLevel(currentCoordinates);
+            player = add(new Player(savedPosition.x, savedPosition.y));
+            ui.showDebugMessage("PLAYER LOCATION LOADED");
+        }
+        else {
+            currentCoordinates = {mapX: 1000, mapY: 1000};
+            loadLevel(currentCoordinates);
+            player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+            ui.showDebugMessage("GAME START");
+        }
     }
 
     override public function update() {
@@ -140,6 +156,25 @@ class GameScene extends Scene
                 player.y += DEBUG_MOVE_SPEED * HXP.elapsed;
             }
         }
+
+        // Resetting, saving, and loading
+        if(Key.pressed(Key.R)) {
+            Data.clear();
+            HXP.scene = new GameScene();
+        }
+        if(Key.pressed(Key.S)) {
+            savePlayerLocation();
+            ui.showDebugMessage("PLAYER LOCATION SAVED");
+        }
+        if(Key.pressed(Key.L)) {
+            HXP.scene = new GameScene();
+        }
+    }
+
+    private function savePlayerLocation() {
+        Data.write("playerCoordinates", {mapX: currentCoordinates.mapX, mapY: currentCoordinates.mapY});
+        Data.write("playerPosition", {x: player.x, y: player.y});
+        Data.save(Main.SAVE_FILE_NAME);
     }
 
     private function getCurrentCoordinates():MapCoordinates {

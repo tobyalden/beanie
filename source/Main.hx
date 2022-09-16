@@ -10,6 +10,8 @@ import scenes.*;
 
 class Main extends Engine
 {
+    public static inline var SAVE_FILE_NAME = "beanieGame";
+
     static function main() {
         new Main();
     }
