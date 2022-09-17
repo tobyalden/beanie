@@ -16,7 +16,7 @@
     <Width>480</Width>
     <Height>360</Height>
   </LevelMaximumSize>
-  <Filename>C:\Users\Underhill\Desktop\GameDev\beanie\assets\levels\project.oep</Filename>
+  <Filename>C:\Users\Dell\Desktop\Coding\beanie\assets\levels\project.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -63,6 +63,21 @@
         <Y>0</Y>
       </Origin>
       <ImageDefinition DrawMode="Image" ImagePath="..\graphics\player.png" Tiled="false">
+        <RectColor A="255" R="255" G="0" B="0" />
+      </ImageDefinition>
+      <ValueDefinitions />
+      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
+    </EntityDefinition>
+    <EntityDefinition Name="buddy" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
+      <Size>
+        <Width>20</Width>
+        <Height>20</Height>
+      </Size>
+      <Origin>
+        <X>0</X>
+        <Y>0</Y>
+      </Origin>
+      <ImageDefinition DrawMode="Image" ImagePath="..\graphics\buddy.png" Tiled="false">
         <RectColor A="255" R="255" G="0" B="0" />
       </ImageDefinition>
       <ValueDefinitions />

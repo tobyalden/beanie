@@ -38,11 +38,8 @@ class GameScene extends Scene
 
     override public function begin() {
         Data.load(Main.SAVE_FILE_NAME);
-        currentCoordinates = {mapX: 1000, mapY: 1000};
         ui = add(new UI());
         ui.showDebugMessage("GAME START");
-        loadLevel(currentCoordinates);
-        player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
 
         var savedCoordinates = Data.read("playerCoordinates");
         var savedPosition = Data.read("playerPosition");
@@ -65,6 +62,9 @@ class GameScene extends Scene
         camera.y = currentCoordinates.mapY * HXP.height;
         if(levelToUnload != null) {
             for(entity in levelToUnload.entities) {
+                if(Type.getSuperClass(Type.getClass(entity)) == Controllable && cast(entity, Controllable).rider != null) {
+                    continue;
+                }
                 remove(entity);
             }
             remove(levelToUnload);
@@ -73,7 +73,12 @@ class GameScene extends Scene
         var oldCoordinates:MapCoordinates = {mapX: currentCoordinates.mapX, mapY: currentCoordinates.mapY};
         currentCoordinates = getCurrentCoordinates();
         if(isTransition(oldCoordinates) && levelExists(currentCoordinates)) {
-            loadLevel(currentCoordinates);
+            if(levelExists(oldCoordinates)) {
+                levelToUnload = currentLevel;
+            }
+            if(levelExists(currentCoordinates)) {
+                loadLevel(currentCoordinates);
+            }
         }
         super.update();
         debug();
@@ -86,9 +91,23 @@ class GameScene extends Scene
     public function loadLevel(coordinates:MapCoordinates) {
         var level = new Level(coordinates.toKey());
         level.offset(coordinates);
-        levelToUnload = currentLevel;
         currentLevel = add(level);
         for(entity in currentLevel.entities) {
+            if(Type.getSuperClass(Type.getClass(entity)) == Controllable) {
+                var controllables:Array<Entity> = [];
+                getClass(Controllable, controllables);
+                var doNotLoad = false;
+                for(controllable in controllables) {
+                    if(cast(entity, Controllable).id == cast(controllable, Controllable).id) {
+                        doNotLoad = true;
+                        break;
+                    }
+                }
+                if(doNotLoad) {
+                    trace('not loading entity with duplicate id ${cast(entity, Controllable).id}');
+                    continue;
+                }
+            }
             add(entity);
         }
     }

@@ -48,6 +48,11 @@ class Level extends Entity
         for(player in xml.node.level.node.entities.nodes.player) {
             playerStart = new Vector2(Std.parseInt(player.att.x), Std.parseInt(player.att.y));
         }
+        var controllableId = 1;
+        for(buddy in xml.node.level.node.entities.nodes.buddy) {
+            entities.push(new Buddy(Std.parseInt(buddy.att.x), Std.parseInt(buddy.att.y), controllableId));
+            controllableId++;
+        }
     }
 
     public function offset(coordinates:MapCoordinates) {
@@ -55,6 +60,9 @@ class Level extends Entity
         for(entity in entities) {
             entity.x += coordinates.mapX * HXP.width;
             entity.y += coordinates.mapY * HXP.height;
+            if(Type.getSuperClass(Type.getClass(entity)) == Controllable) {
+                cast(entity, Controllable).id += coordinates.mapX * 100 + coordinates.mapY * 10000;
+            }
         }
         if(playerStart != null) {
             playerStart.x += coordinates.mapX * HXP.width;
