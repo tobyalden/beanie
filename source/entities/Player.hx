@@ -33,10 +33,7 @@ class Player extends Controllable
                 riding.setRider(this);
             }
         }
-        if(riding != null) {
-            moveTo(riding.x, riding.y - height);
-        }
-        else {
+        if(riding == null) {
             movement();
         }
         animation();

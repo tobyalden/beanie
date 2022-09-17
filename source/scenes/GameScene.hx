@@ -80,6 +80,14 @@ class GameScene extends Scene
                 loadLevel(currentCoordinates);
             }
         }
+        if(player.riding != null) {
+            player.moveTo(player.riding.x, player.riding.y - player.height);
+            var buddyAtBottom = player.riding;
+            while(buddyAtBottom.riding != null) {
+                buddyAtBottom.moveTo(buddyAtBottom.riding.x, buddyAtBottom.riding.y - buddyAtBottom.height);
+                buddyAtBottom = buddyAtBottom.riding;
+            }
+        }
         super.update();
         debug();
     }

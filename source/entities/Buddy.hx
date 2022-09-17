@@ -38,16 +38,12 @@ class Buddy extends Controllable
                 riding = cast(buddy, Controllable);
                 riding.setRider(this);
                 mask = new Hitbox(20, 20);
+                collidable = false;
             }
         }
         if(rider != null) {
             // Buddies can't move without something riding them
-            if(riding != null) {
-                // If the buddy is riding another buddy, snap to their top
-                moveTo(riding.x, riding.y - height);
-            }
-            else {
-                // If the buddy isn't riding anyone, they move like the player
+            if(riding == null) {
                 movement();
             }
         }

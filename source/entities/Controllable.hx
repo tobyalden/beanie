@@ -21,7 +21,7 @@ class Controllable extends Entity
 
     public var id:Int;
     public var rider:Controllable = null;
-    private var riding:Controllable = null;
+    public var riding:Controllable = null;
 
     private var velocity:Vector2;
     private var canFly:Bool;
@@ -94,6 +94,5 @@ class Controllable extends Entity
         velocity.x = 0;
         velocity.y = 0;
     }
-
 }
 
