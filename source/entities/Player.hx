@@ -36,6 +36,11 @@ class Player extends Controllable
         if(riding == null) {
             movement();
         }
+        else if (riding.riding == null) {
+            if(Input.check("up") && Input.pressed("jump")) {
+                dismount();
+            }
+        }
         animation();
         super.update();
     }

@@ -46,6 +46,12 @@ class Buddy extends Controllable
             if(riding == null) {
                 movement();
             }
+            else if (riding.riding == null) {
+                if(Input.check("up") && Input.pressed("jump")) {
+                    collidable = true;
+                    dismount();
+                }
+            }
         }
         animation();
         super.update();

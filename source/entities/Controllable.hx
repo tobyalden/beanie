@@ -33,6 +33,11 @@ class Controllable extends Entity
         //mask = new Hitbox(20, 40, 0, -20);
     }
 
+    public function removeRider() {
+        rider = null;
+        mask = new Hitbox(20, 20);
+    }
+
     public function new(x:Float, y:Float) {
         super(x, y);
         velocity = new Vector2();
@@ -41,6 +46,15 @@ class Controllable extends Entity
 
     override public function update() {
         super.update();
+    }
+
+    private function dismount() {
+        riding.removeRider();
+        riding.velocity.y = 0;
+        riding.moveTo(x, bottom);
+        canFly = false;
+        riding = null;
+        velocity.y = -Controllable.JUMP_POWER;
     }
 
     private function movement() {
