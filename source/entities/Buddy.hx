@@ -28,7 +28,12 @@ class Buddy extends Controllable
         //trace('buddy ${id}: rider: ${rider}. riding: ${riding}');
 
         var buddy = collide("buddy", x, y);
-        if(buddy != null && id != cast(buddy, Controllable).id) {
+        if(
+            buddy != null
+            && velocity.y > 0
+            && centerY < buddy.centerY
+            && id != cast(buddy, Controllable).id
+        ) {
             if(
                 riding == null
                 && rider != null
@@ -45,7 +50,6 @@ class Buddy extends Controllable
             unmountedMovement();
         }
         else {
-            // Buddies can't move without something riding them
             if(riding == null) {
                 movement();
             }

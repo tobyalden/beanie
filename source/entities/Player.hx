@@ -27,7 +27,11 @@ class Player extends Controllable
         //trace('player: rider: ${rider}. riding: ${riding}');
 
         var buddy = collide("buddy", x, y);
-        if(buddy != null) {
+        if(
+            buddy != null
+            && velocity.y > 0
+            && centerY < buddy.centerY
+        ) {
             if(riding == null) {
                 riding = cast(buddy, Controllable);
                 riding.setRider(this);

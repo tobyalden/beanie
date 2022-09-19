@@ -1,11 +1,9 @@
-+ popping buddies off stack
-+ physics for inactive buddies
 - make getting on buddies better
-- fix level loading to accomodate stacks of buddies (a level won't load if you dip into it with a tall stack, meaning the bottom could potentially get stuck in level geometry once it loads in)
-    - could load all adjacent levels (this would also fix the "unmounted buddy reset" problem, sort of... they wouldn't reset till you got too far away)
-    - freeform camera?
-    - could load lower level in addition to current one
-    - could use bottom of stack for y coord if on bottom of screen, top if on top (would result in infinite flipping..)
 - loading / saving stacks of buddies
 - physics modifier when buddy stack gets taller?
+
++ popping buddies off stack
++ physics for inactive buddies
++ fix level loading to accomodate stacks of buddies (a level won't load if you dip into it with a tall stack, meaning the bottom could potentially get stuck in level geometry once it loads in)
+    - could load all adjacent levels (this would also fix the "unmounted buddy reset" problem, sort of... they wouldn't reset till you got too far away)
 - should buddies remember their location? currently unmounted buddies reset on screen reentry
