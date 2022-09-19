@@ -19,6 +19,8 @@ class Controllable extends Entity
     public static inline var JUMP_CANCEL_POWER = 40;
     public static inline var FLIGHT_POWER = 1800;
 
+    public static var dismountedThisFrame:Bool = false;
+
     public var id:Int;
     public var rider:Controllable = null;
     public var riding:Controllable = null;
@@ -55,6 +57,19 @@ class Controllable extends Entity
         canFly = false;
         riding = null;
         velocity.y = -Controllable.JUMP_POWER;
+        Controllable.dismountedThisFrame = true;
+    }
+
+    private function unmountedMovement() {
+        if(isOnGround()) {
+            velocity.x = 0;
+            velocity.y = 0;
+        }
+        else {
+            velocity.y += GRAVITY * HXP.elapsed;
+            velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED, MAX_FALL_SPEED);
+        }
+        moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls"]);
     }
 
     private function movement() {
@@ -91,6 +106,11 @@ class Controllable extends Entity
             velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED, MAX_FALL_SPEED);
         }
         moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls"]);
+    }
+
+    override public function moveCollideX(e:Entity) {
+        velocity.x = 0;
+        return true;
     }
 
     override public function moveCollideY(e:Entity) {

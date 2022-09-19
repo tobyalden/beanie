@@ -16,6 +16,10 @@ import openfl.Assets;
     public var mapX:Int;
     public var mapY:Int;
 
+    public function equals(otherCoordinates:MapCoordinates) {
+        return mapX == otherCoordinates.mapX && mapY == otherCoordinates.mapY;
+    }
+
     public function toKey():String {
         return '${mapX}x${mapY}';
     }
@@ -31,8 +35,7 @@ class GameScene extends Scene
     public static inline var DEBUG_MOVE_SPEED = 300;
 
     private var currentCoordinates:MapCoordinates;
-    private var currentLevel:Level;
-    private var levelToUnload:Level = null;
+    private var loadedLevels:Map<String, Level>;
     private var ui:UI;
     private var player:Player;
 
@@ -41,44 +44,34 @@ class GameScene extends Scene
         ui = add(new UI());
         ui.showDebugMessage("GAME START");
 
+        loadedLevels = [];
+
         var savedCoordinates = Data.read("playerCoordinates");
         var savedPosition = Data.read("playerPosition");
         if(savedCoordinates != null && savedPosition != null) {
             currentCoordinates = {mapX: savedCoordinates.mapX, mapY: savedCoordinates.mapY};
-            loadLevel(currentCoordinates);
+            loadLevels(currentCoordinates);
             player = add(new Player(savedPosition.x, savedPosition.y));
             ui.showDebugMessage("PLAYER LOCATION LOADED");
         }
         else {
-            currentCoordinates = {mapX: 1000, mapY: 1000};
-            loadLevel(currentCoordinates);
-            player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
-            ui.showDebugMessage("GAME START");
+            //currentCoordinates = {mapX: 1000, mapY: 1000};
+            //loadLevels(currentCoordinates);
+            //player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+            //ui.showDebugMessage("GAME START");
         }
     }
 
     override public function update() {
+        trace('$loadedLevels');
+        Controllable.dismountedThisFrame = false;
         camera.x = currentCoordinates.mapX * HXP.width;
         camera.y = currentCoordinates.mapY * HXP.height;
-        if(levelToUnload != null) {
-            for(entity in levelToUnload.entities) {
-                if(Type.getSuperClass(Type.getClass(entity)) == Controllable && cast(entity, Controllable).rider != null) {
-                    continue;
-                }
-                remove(entity);
-            }
-            remove(levelToUnload);
-            levelToUnload = null;
-        }
         var oldCoordinates:MapCoordinates = {mapX: currentCoordinates.mapX, mapY: currentCoordinates.mapY};
         currentCoordinates = getCurrentCoordinates();
-        if(isTransition(oldCoordinates) && levelExists(currentCoordinates)) {
-            if(levelExists(oldCoordinates)) {
-                levelToUnload = currentLevel;
-            }
-            if(levelExists(currentCoordinates)) {
-                loadLevel(currentCoordinates);
-            }
+        if(!currentCoordinates.equals(oldCoordinates)) {
+            loadLevels(currentCoordinates);
+            unloadLevels(oldCoordinates, currentCoordinates);
         }
         if(player.riding != null) {
             player.moveTo(player.riding.x, player.riding.y - player.height);
@@ -96,35 +89,81 @@ class GameScene extends Scene
         return Assets.exists('levels/${coordinates.toKey()}.oel');
     }
 
-    public function loadLevel(coordinates:MapCoordinates) {
-        var level = new Level(coordinates.toKey());
-        level.offset(coordinates);
-        currentLevel = add(level);
-        for(entity in currentLevel.entities) {
-            if(Type.getSuperClass(Type.getClass(entity)) == Controllable) {
-                var controllables:Array<Entity> = [];
-                getClass(Controllable, controllables);
-                var doNotLoad = false;
-                for(controllable in controllables) {
-                    if(cast(entity, Controllable).id == cast(controllable, Controllable).id) {
-                        doNotLoad = true;
-                        break;
+    public function levelLoaded(coordinates:MapCoordinates) {
+        return loadedLevels.exists(coordinates.toKey());
+    }
+
+    public function getCenterAndAdjacentCoordinates(centerCoordinates:MapCoordinates) {
+        var allCoordinates:Array<MapCoordinates> = [
+            centerCoordinates,
+            {mapX: centerCoordinates.mapX - 1, mapY: centerCoordinates.mapY},
+            {mapX: centerCoordinates.mapX + 1, mapY: centerCoordinates.mapY},
+            {mapX: centerCoordinates.mapX, mapY: centerCoordinates.mapY - 1},
+            {mapX: centerCoordinates.mapX, mapY: centerCoordinates.mapY + 1}
+        ];
+        return allCoordinates;
+    }
+
+    public function loadLevels(centerCoordinates:MapCoordinates) {
+        for(coordinates in getCenterAndAdjacentCoordinates(centerCoordinates)) {
+            if(!levelExists(coordinates) || levelLoaded(coordinates)) {
+                continue;
+            }
+            var level = new Level(coordinates.toKey());
+            level.offset(coordinates);
+            add(level);
+            loadedLevels[coordinates.toKey()] = level;
+            for(entity in level.entities) {
+                if(Type.getSuperClass(Type.getClass(entity)) == Controllable) {
+                    var controllables:Array<Entity> = [];
+                    getClass(Controllable, controllables);
+                    var doNotLoad = false;
+                    for(controllable in controllables) {
+                        if(cast(entity, Controllable).id == cast(controllable, Controllable).id) {
+                            doNotLoad = true;
+                            break;
+                        }
+                    }
+                    if(doNotLoad) {
+                        trace('not loading entity with duplicate id ${cast(entity, Controllable).id}');
+                        continue;
                     }
                 }
-                if(doNotLoad) {
-                    trace('not loading entity with duplicate id ${cast(entity, Controllable).id}');
-                    continue;
-                }
+                add(entity);
             }
-            add(entity);
         }
     }
 
-    public function isTransition(oldCoordinates:MapCoordinates) {
-        if(oldCoordinates.toKey() == currentCoordinates.toKey()) {
-            return false;
+    public function unloadLevels(oldCoordinates:MapCoordinates, newCoordinates:MapCoordinates) {
+        var oldCoordinateSet = getCenterAndAdjacentCoordinates(oldCoordinates);
+        var newCoordinateSet = getCenterAndAdjacentCoordinates(newCoordinates);
+        var coordinatesToUnload:Array<MapCoordinates> = [];
+        for(oldCoordinateSetCheck in oldCoordinateSet) {
+            var shouldUnload = true;
+            for(newCoordinateSetCheck in newCoordinateSet) {
+                if(oldCoordinateSetCheck.equals(newCoordinateSetCheck)) {
+                    shouldUnload = false;
+                    break;
+                }
+            }
+            if(shouldUnload) {
+                coordinatesToUnload.push(oldCoordinateSetCheck);
+            }
         }
-        return true;
+
+        for(coordinateToUnload in coordinatesToUnload) {
+            if(levelLoaded(coordinateToUnload)) {
+                remove(loadedLevels[coordinateToUnload.toKey()]);
+                for(entity in loadedLevels[coordinateToUnload.toKey()].entities) {
+                    if(Type.getSuperClass(Type.getClass(entity)) == Controllable && cast(entity, Controllable).rider != null) {
+                        continue;
+                    }
+                    // TODO: will this crash if I remove an entity that's already been removed?
+                    remove(entity);
+                }
+                loadedLevels.remove(coordinateToUnload.toKey());
+            }
+        }
     }
 
     private function debug() {

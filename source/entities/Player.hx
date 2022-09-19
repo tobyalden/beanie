@@ -37,7 +37,7 @@ class Player extends Controllable
             movement();
         }
         else if (riding.riding == null) {
-            if(Input.check("up") && Input.pressed("jump")) {
+            if(Input.check("up") && Input.pressed("jump") && !Controllable.dismountedThisFrame) {
                 dismount();
             }
         }

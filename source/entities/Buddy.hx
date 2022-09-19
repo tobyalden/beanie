@@ -41,15 +41,18 @@ class Buddy extends Controllable
                 collidable = false;
             }
         }
-        if(rider != null) {
+        if(rider == null) {
+            unmountedMovement();
+        }
+        else {
             // Buddies can't move without something riding them
             if(riding == null) {
                 movement();
             }
             else if (riding.riding == null) {
-                if(Input.check("up") && Input.pressed("jump")) {
-                    collidable = true;
+                if(Input.check("up") && Input.pressed("jump") && !Controllable.dismountedThisFrame) {
                     dismount();
+                    collidable = true;
                 }
             }
         }
