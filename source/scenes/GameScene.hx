@@ -50,9 +50,30 @@ class GameScene extends Scene
         var savedPosition = Data.read("playerPosition");
         if(savedCoordinates != null && savedPosition != null) {
             currentCoordinates = {mapX: savedCoordinates.mapX, mapY: savedCoordinates.mapY};
-            loadLevels(currentCoordinates);
             player = add(new Player(savedPosition.x, savedPosition.y));
             ui.showDebugMessage("PLAYER LOCATION LOADED");
+
+            // Load buddies
+            var controllableIds:Array<Int> = Data.read("controllableIds", []);
+            var playerAndBuddies:Array<Controllable> = [player];
+            for(i in 0...controllableIds.length) {
+                playerAndBuddies.push(new Buddy(player.x, player.y + 20 * i, controllableIds[i]));
+            }
+            for(i in 0...playerAndBuddies.length) {
+                if(i < playerAndBuddies.length - 1) {
+                    playerAndBuddies[i].riding = playerAndBuddies[i + 1];
+                    playerAndBuddies[i + 1].setRider(playerAndBuddies[i]);
+                    if(i > 0) {
+                        playerAndBuddies[i].mask = new Hitbox(20, 20);
+                        playerAndBuddies[i].collidable = false;
+                    }
+                }
+                if(i > 0) {
+                    add(playerAndBuddies[i]);
+                }
+            }
+
+            loadLevels(currentCoordinates, controllableIds);
         }
         else {
             currentCoordinates = {mapX: 1000, mapY: 1000};
@@ -113,7 +134,7 @@ class GameScene extends Scene
         return allCoordinates;
     }
 
-    public function loadLevels(centerCoordinates:MapCoordinates) {
+    public function loadLevels(centerCoordinates:MapCoordinates, mountIds:Array<Int> = null) {
         for(coordinates in getCenterAndAdjacentCoordinates(centerCoordinates)) {
             if(!levelExists(coordinates) || levelLoaded(coordinates)) {
                 continue;
@@ -124,6 +145,9 @@ class GameScene extends Scene
             loadedLevels[coordinates.toKey()] = level;
             for(entity in level.entities) {
                 if(Type.getSuperClass(Type.getClass(entity)) == Controllable) {
+                    if(mountIds != null && mountIds.indexOf(cast(entity, Controllable).id) != -1) {
+                        continue;
+                    }
                     var controllables:Array<Entity> = [];
                     getClass(Controllable, controllables);
                     var doNotLoad = false;
@@ -249,6 +273,18 @@ class GameScene extends Scene
     private function savePlayerLocation() {
         Data.write("playerCoordinates", {mapX: currentCoordinates.mapX, mapY: currentCoordinates.mapY});
         Data.write("playerPosition", {x: player.x, y: player.y});
+
+        var controllables:Array<Entity> = [];
+        var controllableIds:Array<Int> = [];
+        getClass(Controllable, controllables);
+        for(entity in controllables) {
+            var controllable = cast(entity, Controllable);
+            if(controllable.rider != null) {
+                controllableIds.push(controllable.id);
+            }
+        }
+        Data.write("controllableIds", controllableIds);
+
         Data.save(Main.SAVE_FILE_NAME);
     }
 
