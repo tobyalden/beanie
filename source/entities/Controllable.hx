@@ -64,8 +64,22 @@ class Controllable extends Entity
         super.update();
     }
 
-    private function die() {
-        // Overridden in child classes
+    private function detachAllRiding() {
+        var nextRiding = riding;
+        var allRiding:Array<Controllable> = [];
+        var releaseVelocityX:Float = 0;
+        while(nextRiding != null) {
+            allRiding.push(nextRiding);
+            nextRiding.removeRider();
+            nextRiding.collidable = true;
+            var storedRiding = nextRiding.riding;
+            nextRiding.riding = null;
+            var releaseVelocityX = nextRiding.velocity.x;
+            nextRiding = storedRiding;
+        }
+        for(controllable in allRiding) {
+            controllable.velocity.x = allRiding[allRiding.length - 1].velocity.x;
+        }
     }
 
     private function dismount() {

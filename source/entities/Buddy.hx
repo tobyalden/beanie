@@ -71,26 +71,11 @@ class Buddy extends Controllable
         super.update();
     } 
 
-    override private function die() {
-        super.die();
+    private function die() {
         collidable = false;
         HXP.scene.remove(this);
         explode(20);
-        var nextRiding = riding;
-        var allRiding:Array<Controllable> = [];
-        var releaseVelocityX:Float = 0;
-        while(nextRiding != null) {
-            allRiding.push(nextRiding);
-            nextRiding.removeRider();
-            nextRiding.collidable = true;
-            var storedRiding = nextRiding.riding;
-            nextRiding.riding = null;
-            var releaseVelocityX = nextRiding.velocity.x;
-            nextRiding = storedRiding;
-        }
-        for(controllable in allRiding) {
-            controllable.velocity.x = allRiding[allRiding.length - 1].velocity.x;
-        }
+        detachAllRiding();
         if(rider != null) {
             rider.collidable = true;
             rider.dismount();

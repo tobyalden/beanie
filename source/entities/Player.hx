@@ -60,12 +60,12 @@ class Player extends Controllable
         super.update();
     }
 
-    override private function die() {
-        super.die();
+    private function die() {
         visible = false;
         collidable = false;
         isDead = true;
         explode(50);
+        detachAllRiding();
         //sfx["die"].play();
         // TODO: stop sfx
         cast(HXP.scene, GameScene).onDeath();
