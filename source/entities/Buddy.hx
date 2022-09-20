@@ -61,8 +61,43 @@ class Buddy extends Controllable
             }
         }
         animation();
+
+        // We use collideRect here to only check the Controllable's "actual"
+        // hitbox because the hitbox is extruded upwards to account for riders
+        if(HXP.scene.collideRect("hazard", x, y, 20, 20) != null) {
+            die();
+        }
+
         super.update();
     } 
+
+    override private function die() {
+        super.die();
+        collidable = false;
+        HXP.scene.remove(this);
+        explode(20);
+        var nextRiding = riding;
+        var allRiding:Array<Controllable> = [];
+        var releaseVelocityX:Float = 0;
+        while(nextRiding != null) {
+            allRiding.push(nextRiding);
+            nextRiding.removeRider();
+            nextRiding.collidable = true;
+            var storedRiding = nextRiding.riding;
+            nextRiding.riding = null;
+            var releaseVelocityX = nextRiding.velocity.x;
+            nextRiding = storedRiding;
+        }
+        for(controllable in allRiding) {
+            controllable.velocity.x = allRiding[allRiding.length - 1].velocity.x;
+        }
+        if(rider != null) {
+            rider.collidable = true;
+            rider.dismount();
+        }
+        //sfx["die"].play();
+        // TODO: stop sfx
+    }
 
     private function animation() {
     }
