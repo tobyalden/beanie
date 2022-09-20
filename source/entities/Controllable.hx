@@ -61,7 +61,14 @@ class Controllable extends Entity
     }
 
     override public function update() {
+        if(collide("hazard", x, y) != null) {
+            die();
+        }
         super.update();
+    }
+
+    private function die() {
+        // Overridden in child classes
     }
 
     private function dismount() {

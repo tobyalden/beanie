@@ -53,6 +53,14 @@ class Level extends Entity
             entities.push(new Buddy(Std.parseInt(buddy.att.x), Std.parseInt(buddy.att.y), controllableId));
             controllableId++;
         }
+        for(spike_floor in xml.node.level.node.entities.nodes.spike_floor) {
+            entities.push(new Spike(
+                Std.parseInt(spike_floor.att.x),
+                Std.parseInt(spike_floor.att.y),
+                Spike.FLOOR,
+                Std.parseInt(spike_floor.att.width)
+            ));
+        }
     }
 
     public function offset(coordinates:MapCoordinates) {

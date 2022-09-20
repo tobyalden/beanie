@@ -40,5 +40,6 @@
     <buddy id="1" x="160" y="230" />
     <buddy id="2" x="210" y="230" />
     <buddy id="3" x="330" y="230" />
+    <spike_floor id="4" x="250" y="240" width="50" />
   </entities>
 </level>

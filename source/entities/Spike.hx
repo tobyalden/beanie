@@ -3,6 +3,7 @@ package entities;
 import haxepunk.*;
 import haxepunk.graphics.*;
 import haxepunk.graphics.tile.*;
+import haxepunk.masks.*;
 
 class Spike extends Entity
 {

@@ -38,11 +38,15 @@ class GameScene extends Scene
     private var loadedLevels:Map<String, Level>;
     private var ui:UI;
     private var player:Player;
+    private var curtain:Curtain;
 
     override public function begin() {
         Data.load(Main.SAVE_FILE_NAME);
         ui = add(new UI());
         ui.showDebugMessage("GAME START");
+
+        curtain = add(new Curtain());
+        curtain.fadeOut(0.2);
 
         loadedLevels = [];
 
@@ -197,6 +201,15 @@ class GameScene extends Scene
                 loadedLevels.remove(coordinateToUnload.toKey());
             }
         }
+    }
+
+    public function onDeath() {
+        HXP.alarm(0.5, function() {
+            curtain.fadeIn(0.2);
+            HXP.alarm(0.2, function() {
+                HXP.scene = new GameScene();
+            });
+        });
     }
 
     private function debug() {
