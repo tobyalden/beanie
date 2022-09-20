@@ -40,6 +40,20 @@ class Controllable extends Entity
         mask = new Hitbox(20, 20);
     }
 
+    private function countTotalRiders() {
+        var totalRiders = 0;
+        var lastRider = rider;
+        while(lastRider != null) {
+            lastRider = lastRider.rider;
+            totalRiders++;
+        }
+        return totalRiders;
+    }
+
+    private function getRiderWeightModifier() {
+        return 1 - 0.1 * countTotalRiders();
+    }
+
     public function new(x:Float, y:Float) {
         super(x, y);
         velocity = new Vector2();
@@ -74,10 +88,10 @@ class Controllable extends Entity
 
     private function movement() {
         if(Input.check("left")) {
-            velocity.x = -SPEED;
+            velocity.x = -SPEED * getRiderWeightModifier();
         }
         else if(Input.check("right")) {
-            velocity.x = SPEED;
+            velocity.x = SPEED * getRiderWeightModifier();
         }
         else {
             velocity.x = 0;
@@ -86,7 +100,7 @@ class Controllable extends Entity
         if(isOnGround()) {
             velocity.y = 0;
             if(Input.pressed("jump")) {
-                velocity.y = -JUMP_POWER;
+                velocity.y = -JUMP_POWER * getRiderWeightModifier();
                 canFly = false;
             }
         }
@@ -97,7 +111,7 @@ class Controllable extends Entity
             }
             velocity.y += gravity * HXP.elapsed;
             if(Input.check("jump") && canFly) {
-                velocity.y -= FLIGHT_POWER * HXP.elapsed;
+                velocity.y -= FLIGHT_POWER * getRiderWeightModifier() * HXP.elapsed;
             }
             else if(Input.released("jump")) {
                 canFly = true;

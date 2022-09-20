@@ -1,6 +1,5 @@
-- loading / saving stacks of buddies
-- physics modifier when buddy stack gets taller?
-
++ physics modifier when buddy stack gets taller?
++ loading / saving stacks of buddies
 + make getting on buddies better
 + popping buddies off stack
 + physics for inactive buddies
