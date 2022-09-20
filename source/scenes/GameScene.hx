@@ -55,10 +55,11 @@ class GameScene extends Scene
             ui.showDebugMessage("PLAYER LOCATION LOADED");
         }
         else {
-            //currentCoordinates = {mapX: 1000, mapY: 1000};
-            //loadLevels(currentCoordinates);
-            //player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
-            //ui.showDebugMessage("GAME START");
+            currentCoordinates = {mapX: 1000, mapY: 1000};
+            loadLevels(currentCoordinates);
+            var currentLevel = loadedLevels[currentCoordinates.toKey()];
+            player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+            ui.showDebugMessage("GAME START");
         }
     }
 

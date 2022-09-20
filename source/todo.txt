@@ -1,7 +1,7 @@
-- make getting on buddies better
 - loading / saving stacks of buddies
 - physics modifier when buddy stack gets taller?
 
++ make getting on buddies better
 + popping buddies off stack
 + physics for inactive buddies
 + fix level loading to accomodate stacks of buddies (a level won't load if you dip into it with a tall stack, meaning the bottom could potentially get stuck in level geometry once it loads in)
