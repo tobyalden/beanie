@@ -216,14 +216,8 @@ class GameScene extends Scene
         ui.roomInfo.text = '[${currentCoordinates.mapX}, ${currentCoordinates.mapY}]';
 
         var isDebugMoving = Key.check(Key.DIGIT_9) || Key.check(Key.DIGIT_0);
-        if(isDebugMoving) {
-            player.active = false;
-            player.graphic.alpha = 0.8;
-        }
-        else {
-            player.active = true;
-            player.graphic.alpha = 1;
-        }
+
+        var allRiding = player.getAllRiding();
 
         // Camera
         if(Key.check(Key.DIGIT_1)) {
@@ -235,37 +229,48 @@ class GameScene extends Scene
             camera.scale = 1;
         }
 
-        // Debug movement (screen by screen)
-        if(Key.check(Key.DIGIT_0)) {
-            player.zeroVelocity();
-            if(Key.pressed(Key.A)) {
-                player.x -= HXP.width;
+        for(controllable in allRiding) {
+            if(isDebugMoving) {
+                controllable.active = false;
+                controllable.graphic.alpha = 0.8;
             }
-            if(Key.pressed(Key.D)) {
-                player.x += HXP.width;
+            else {
+                controllable.active = true;
+                controllable.graphic.alpha = 1;
             }
-            if(Key.pressed(Key.W)) {
-                player.y -= HXP.height;
-            }
-            if(Key.pressed(Key.S)) {
-                player.y += HXP.height;
-            }
-        }
 
-        // Debug movement (smooth)
-        if(Key.check(Key.DIGIT_9)) {
-            player.zeroVelocity();
-            if(Key.check(Key.A)) {
-                player.x -= DEBUG_MOVE_SPEED * HXP.elapsed;
+            // Debug movement (screen by screen)
+            if(Key.check(Key.DIGIT_0)) {
+                controllable.zeroVelocity();
+                if(Key.pressed(Key.A)) {
+                    controllable.x -= HXP.width;
+                }
+                if(Key.pressed(Key.D)) {
+                    controllable.x += HXP.width;
+                }
+                if(Key.pressed(Key.W)) {
+                    controllable.y -= HXP.height;
+                }
+                if(Key.pressed(Key.S)) {
+                    controllable.y += HXP.height;
+                }
             }
-            if(Key.check(Key.D)) {
-                player.x += DEBUG_MOVE_SPEED * HXP.elapsed;
-            }
-            if(Key.check(Key.W)) {
-                player.y -= DEBUG_MOVE_SPEED * HXP.elapsed;
-            }
-            if(Key.check(Key.S)) {
-                player.y += DEBUG_MOVE_SPEED * HXP.elapsed;
+
+            // Debug movement (smooth)
+            if(Key.check(Key.DIGIT_9)) {
+                controllable.zeroVelocity();
+                if(Key.check(Key.A)) {
+                    controllable.x -= DEBUG_MOVE_SPEED * HXP.elapsed;
+                }
+                if(Key.check(Key.D)) {
+                    controllable.x += DEBUG_MOVE_SPEED * HXP.elapsed;
+                }
+                if(Key.check(Key.W)) {
+                    controllable.y -= DEBUG_MOVE_SPEED * HXP.elapsed;
+                }
+                if(Key.check(Key.S)) {
+                    controllable.y += DEBUG_MOVE_SPEED * HXP.elapsed;
+                }
             }
         }
 

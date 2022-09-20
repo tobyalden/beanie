@@ -1,9 +1,9 @@
 before i hand it off:
-- spike object
-- death / respawn
-- curtain fade
-- levels read from externall folder
+- levels read from external folder
 
++ spike object
++ death / respawn
++ curtain fade
 + physics modifier when buddy stack gets taller?
 + loading / saving stacks of buddies
 + make getting on buddies better

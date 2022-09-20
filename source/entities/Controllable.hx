@@ -64,6 +64,26 @@ class Controllable extends Entity
         super.update();
     }
 
+    public function getAllRiding() {
+        var allRiding:Array<Controllable> = [this];
+        var nextRiding = riding;
+        while(nextRiding != null) {
+            allRiding.push(nextRiding);
+            nextRiding = nextRiding.riding;
+        }
+        return allRiding;
+    }
+
+    //public function getBottommostMount() {
+        //var bottommostMount = this;
+        //var nextRiding = riding;
+        //while(nextRiding != null) {
+            //bottommostMount = nextRiding;
+            //nextRiding = nextRiding.riding;
+        //}
+        //return bottommostMount;
+    //}
+
     private function detachAllRiding() {
         var nextRiding = riding;
         var allRiding:Array<Controllable> = [];
