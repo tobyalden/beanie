@@ -119,7 +119,7 @@ class Controllable extends Entity
         }
         else {
             velocity.y += GRAVITY * HXP.elapsed;
-            velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED, MAX_FALL_SPEED);
+            velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED * getRiderWeightModifier(), MAX_FALL_SPEED);
         }
         moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls"]);
     }
