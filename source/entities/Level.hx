@@ -53,12 +53,36 @@ class Level extends Entity
             entities.push(new Buddy(Std.parseInt(buddy.att.x), Std.parseInt(buddy.att.y), controllableId));
             controllableId++;
         }
-        for(spike_floor in xml.node.level.node.entities.nodes.spike_floor) {
+        for(spikeFloor in xml.node.level.node.entities.nodes.spike_floor) {
             entities.push(new Spike(
-                Std.parseInt(spike_floor.att.x),
-                Std.parseInt(spike_floor.att.y),
+                Std.parseInt(spikeFloor.att.x),
+                Std.parseInt(spikeFloor.att.y),
                 Spike.FLOOR,
-                Std.parseInt(spike_floor.att.width)
+                Std.parseInt(spikeFloor.att.width)
+            ));
+        }
+        for(spikeCeiling in xml.node.level.node.entities.nodes.spike_ceiling) {
+            entities.push(new Spike(
+                Std.parseInt(spikeCeiling.att.x),
+                Std.parseInt(spikeCeiling.att.y),
+                Spike.CEILING,
+                Std.parseInt(spikeCeiling.att.width)
+            ));
+        }
+        for(spikeLeftWall in xml.node.level.node.entities.nodes.spike_left_wall) {
+            entities.push(new Spike(
+                Std.parseInt(spikeLeftWall.att.x),
+                Std.parseInt(spikeLeftWall.att.y),
+                Spike.LEFT_WALL,
+                Std.parseInt(spikeLeftWall.att.height)
+            ));
+        }
+        for(spikeRightWall in xml.node.level.node.entities.nodes.spike_right_wall) {
+            entities.push(new Spike(
+                Std.parseInt(spikeRightWall.att.x),
+                Std.parseInt(spikeRightWall.att.y),
+                Spike.RIGHT_WALL,
+                Std.parseInt(spikeRightWall.att.height)
             ));
         }
     }

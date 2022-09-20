@@ -37,11 +37,13 @@
 111111111111111111111111111111111111111000011111</solids>
   <entities>
     <player id="0" x="120" y="230" />
+    <buddy id="3" x="210" y="230" />
+    <spike_floor id="4" x="320" y="240" width="60" />
+    <buddy id="6" x="250" y="230" />
     <buddy id="1" x="160" y="230" />
-    <buddy id="2" x="210" y="230" />
-    <buddy id="3" x="330" y="230" />
-    <spike_floor id="4" x="360" y="120" width="50" />
-    <buddy id="5" x="250" y="230" />
-    <buddy id="6" x="280" y="230" />
+    <spike_ceiling id="2" x="140" y="10" width="100" />
+    <spike_left_wall id="5" x="10" y="70" height="50" />
+    <spike_right_wall id="7" x="460" y="70" height="10" />
+    <spike_right_wall id="8" x="460" y="110" height="40" />
   </entities>
 </level>
