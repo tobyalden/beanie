@@ -64,7 +64,7 @@ class GameScene extends Scene
     }
 
     override public function update() {
-        trace('$loadedLevels');
+        //trace('$loadedLevels');
         Controllable.dismountedThisFrame = false;
         camera.x = currentCoordinates.mapX * HXP.width;
         camera.y = currentCoordinates.mapY * HXP.height;
@@ -74,15 +74,23 @@ class GameScene extends Scene
             loadLevels(currentCoordinates);
             unloadLevels(oldCoordinates, currentCoordinates);
         }
-        if(player.riding != null) {
-            player.moveTo(player.riding.x, player.riding.y - player.height);
-            var buddyAtBottom = player.riding;
-            while(buddyAtBottom.riding != null) {
-                buddyAtBottom.moveTo(buddyAtBottom.riding.x, buddyAtBottom.riding.y - buddyAtBottom.height);
-                buddyAtBottom = buddyAtBottom.riding;
-            }
-        }
         super.update();
+        if(player.riding != null) {
+            var buddyAtBottom = player.riding;
+            var allBuddies = [buddyAtBottom];
+            while(buddyAtBottom.riding != null) {
+                //buddyAtBottom.moveTo(buddyAtBottom.riding.x, buddyAtBottom.riding.y - buddyAtBottom.height);
+                buddyAtBottom = buddyAtBottom.riding;
+                allBuddies.push(buddyAtBottom);
+            }
+            allBuddies.reverse();
+            for(buddy in allBuddies) {
+                if(buddy.riding != null) {
+                    buddy.moveTo(buddy.riding.x, buddy.riding.y - buddy.height);
+                }
+            }
+            player.moveTo(player.riding.x, player.riding.y - player.height);
+        }
         debug();
     }
 
