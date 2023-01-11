@@ -45,8 +45,10 @@ class Level extends Entity
 
         // Load entities
         entities = new Array<Entity>();
-        for(player in xml.node.level.node.entities.nodes.player) {
-            playerStart = new Vector2(Std.parseInt(player.att.x), Std.parseInt(player.att.y));
+        if(xml.node.level.hasNode.entities) {
+            for(player in xml.node.level.node.entities.nodes.player) {
+                playerStart = new Vector2(Std.parseInt(player.att.x), Std.parseInt(player.att.y));
+            }
         }
     }
 
