@@ -62,8 +62,6 @@ class GameScene extends Scene
     }
 
     override public function update() {
-        camera.x = currentCoordinates.mapX * HXP.width;
-        camera.y = currentCoordinates.mapY * HXP.height;
         if(levelToUnload != null) {
             for(entity in levelToUnload.entities) {
                 remove(entity);
@@ -77,6 +75,13 @@ class GameScene extends Scene
             loadLevel(currentCoordinates);
         }
         super.update();
+        camera.x = player.centerX - HXP.width / 2;
+        camera.x = MathUtil.clamp(
+            camera.x,
+            currentCoordinates.mapX * Level.LEVEL_WIDTH,
+            (currentCoordinates.mapX + 1) * Level.LEVEL_WIDTH - HXP.width
+        );
+        camera.y = currentCoordinates.mapY * HXP.height;
         debug();
     }
 
@@ -124,25 +129,24 @@ class GameScene extends Scene
             camera.scale = 1;
         }
 
-        // Debug movement (screen by screen)
         if(Key.check(Key.DIGIT_0)) {
+            // Debug movement (screen by screen)
             player.zeroVelocity();
             if(Key.pressed(Key.A)) {
-                player.x -= HXP.width;
+                player.x -= Level.LEVEL_WIDTH;
             }
             if(Key.pressed(Key.D)) {
-                player.x += HXP.width;
+                player.x += Level.LEVEL_WIDTH;
             }
             if(Key.pressed(Key.W)) {
-                player.y -= HXP.height;
+                player.y -= Level.LEVEL_HEIGHT;
             }
             if(Key.pressed(Key.S)) {
-                player.y += HXP.height;
+                player.y += Level.LEVEL_HEIGHT;
             }
         }
-
-        // Debug movement (smooth)
-        if(Key.check(Key.DIGIT_9)) {
+        else if(Key.check(Key.DIGIT_9)) {
+            // Debug movement (smooth)
             player.zeroVelocity();
             if(Key.check(Key.A)) {
                 player.x -= DEBUG_MOVE_SPEED * HXP.elapsed;
@@ -157,17 +161,18 @@ class GameScene extends Scene
                 player.y += DEBUG_MOVE_SPEED * HXP.elapsed;
             }
         }
-
-        // Resetting, saving, and loading
-        if(Key.pressed(Key.R)) {
+        else if(Key.pressed(Key.R)) {
+            // Reset
             Data.clear();
             HXP.scene = new GameScene();
         }
-        if(Key.pressed(Key.S)) {
+        else if(Key.pressed(Key.S)) {
+            // Save
             savePlayerLocation();
             ui.showDebugMessage("PLAYER LOCATION SAVED");
         }
-        if(Key.pressed(Key.L)) {
+        else if(Key.pressed(Key.L)) {
+            // Load
             HXP.scene = new GameScene();
         }
     }
@@ -180,8 +185,8 @@ class GameScene extends Scene
 
     private function getCurrentCoordinates():MapCoordinates {
         return {
-            mapX: Std.int(Math.floor(player.centerX / HXP.width)),
-            mapY: Std.int(Math.floor(player.centerY / HXP.height))
+            mapX: Std.int(Math.floor(player.centerX / Level.LEVEL_WIDTH)),
+            mapY: Std.int(Math.floor(player.centerY / Level.LEVEL_HEIGHT))
         };
     }
 }

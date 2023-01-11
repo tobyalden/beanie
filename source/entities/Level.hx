@@ -11,8 +11,8 @@ import scenes.GameScene;
 class Level extends Entity
 {
     public static inline var TILE_SIZE = 10;
-    public static inline var MIN_WIDTH = 360;
-    public static inline var MIN_HEIGHT = 360;
+    public static inline var LEVEL_WIDTH = 1920;
+    public static inline var LEVEL_HEIGHT = 360;
 
     public var entities(default, null):Array<Entity>;
     public var playerStart(default, null):Vector2 = null;
@@ -51,14 +51,14 @@ class Level extends Entity
     }
 
     public function offset(coordinates:MapCoordinates) {
-        moveTo(coordinates.mapX * HXP.width, coordinates.mapY * HXP.height);
+        moveTo(coordinates.mapX * LEVEL_WIDTH, coordinates.mapY * LEVEL_HEIGHT);
         for(entity in entities) {
-            entity.x += coordinates.mapX * HXP.width;
-            entity.y += coordinates.mapY * HXP.height;
+            entity.x += coordinates.mapX * LEVEL_WIDTH;
+            entity.y += coordinates.mapY * LEVEL_HEIGHT;
         }
         if(playerStart != null) {
-            playerStart.x += coordinates.mapX * HXP.width;
-            playerStart.y += coordinates.mapY * HXP.height;
+            playerStart.x += coordinates.mapX * LEVEL_WIDTH;
+            playerStart.y += coordinates.mapY * LEVEL_HEIGHT;
         }
     }
 
