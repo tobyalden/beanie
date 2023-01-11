@@ -42,13 +42,14 @@ class GameScene extends Scene
         ui = add(new UI());
         ui.showDebugMessage("GAME START");
         loadLevel(currentCoordinates);
-        player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
 
         var savedCoordinates = Data.read("playerCoordinates");
         var savedPosition = Data.read("playerPosition");
         if(savedCoordinates != null && savedPosition != null) {
             currentCoordinates = {mapX: savedCoordinates.mapX, mapY: savedCoordinates.mapY};
-            loadLevel(currentCoordinates);
+            if(levelExists(currentCoordinates)) {
+                loadLevel(currentCoordinates);
+            }
             player = add(new Player(savedPosition.x, savedPosition.y));
             ui.showDebugMessage("PLAYER LOCATION LOADED");
         }

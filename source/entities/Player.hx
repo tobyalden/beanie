@@ -15,13 +15,11 @@ class Player extends Entity
     public static inline var GRAVITY = 900;
     public static inline var MAX_FALL_SPEED = 300;
     public static inline var MAX_RISE_SPEED = 200;
-    public static inline var JUMP_POWER = 200;
+    public static inline var JUMP_POWER = 400;
     public static inline var JUMP_CANCEL_POWER = 40;
-    public static inline var FLIGHT_POWER = 1800;
 
     private var velocity:Vector2;
     private var sprite:Spritemap;
-    private var canFly:Bool;
 
     public function new(x:Float, y:Float) {
         super(x, y);
@@ -30,7 +28,6 @@ class Player extends Entity
         sprite.add("idle", [0]);
         graphic = sprite;
         velocity = new Vector2();
-        canFly = false;
     }
 
     override public function update() {
@@ -54,7 +51,6 @@ class Player extends Entity
             velocity.y = 0;
             if(Input.pressed("jump")) {
                 velocity.y = -JUMP_POWER;
-                canFly = false;
             }
         }
         else {
@@ -62,23 +58,20 @@ class Player extends Entity
             if(Math.abs(velocity.y) < JUMP_CANCEL_POWER) {
                 gravity *= 0.5;
             }
+            if(Input.released("jump") && velocity.y < -JUMP_CANCEL_POWER) {
+                velocity.y = -JUMP_CANCEL_POWER;
+            }
             velocity.y += gravity * HXP.elapsed;
-            if(Input.check("jump") && canFly) {
-                velocity.y -= FLIGHT_POWER * HXP.elapsed;
-            }
-            else if(Input.released("jump")) {
-                canFly = true;
-                velocity.y = Math.max(velocity.y, -JUMP_CANCEL_POWER);
-            }
-            velocity.y = MathUtil.clamp(velocity.y, -MAX_RISE_SPEED, MAX_FALL_SPEED);
+            velocity.y = Math.min(velocity.y, MAX_FALL_SPEED);
         }
         moveBy(velocity.x * HXP.elapsed, velocity.y * HXP.elapsed, ["walls"]);
     }
 
     override public function moveCollideY(e:Entity) {
-        if(velocity.y < 0) {
-            velocity.y = -velocity.y;
-        }
+        //if(velocity.y < 0) {
+            //velocity.y = -velocity.y;
+        //}
+        velocity.y = 0;
         return true;
     }
 
