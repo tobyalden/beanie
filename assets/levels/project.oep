@@ -13,7 +13,7 @@
     <Height>360</Height>
   </LevelMinimumSize>
   <LevelMaximumSize>
-    <Width>480</Width>
+    <Width>1920</Width>
     <Height>360</Height>
   </LevelMaximumSize>
   <Filename>C:\Users\Underhill\Desktop\GameDev\beanie\assets\levels\project.oep</Filename>
@@ -29,8 +29,8 @@
     <LayerDefinition xsi:type="GridLayerDefinition">
       <Name>solids</Name>
       <Grid>
-        <Width>10</Width>
-        <Height>10</Height>
+        <Width>20</Width>
+        <Height>20</Height>
       </Grid>
       <ScrollFactor>
         <X>1</X>

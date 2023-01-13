@@ -14,8 +14,7 @@ class Player extends Entity
     public static inline var SPEED = 175;
     public static inline var GRAVITY = 900;
     public static inline var MAX_FALL_SPEED = 300;
-    public static inline var MAX_RISE_SPEED = 200;
-    public static inline var JUMP_POWER = 400;
+    public static inline var JUMP_POWER = 350;
     public static inline var JUMP_CANCEL_POWER = 40;
 
     private var velocity:Vector2;

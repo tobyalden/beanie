@@ -56,7 +56,8 @@ class GameScene extends Scene
         else {
             currentCoordinates = {mapX: 1000, mapY: 1000};
             loadLevel(currentCoordinates);
-            player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+            //player = add(new Player(currentLevel.playerStart.x, currentLevel.playerStart.y));
+            player = add(new Player(currentCoordinates.mapX * Level.LEVEL_WIDTH + 100, currentCoordinates.mapY * Level.LEVEL_HEIGHT + 100));
             ui.showDebugMessage("GAME START");
         }
     }
@@ -121,9 +122,15 @@ class GameScene extends Scene
 
         // Camera
         if(Key.check(Key.DIGIT_1)) {
-            camera.scale = 0.33;
-            camera.x = (currentCoordinates.mapX - 1) * HXP.width;
-            camera.y = (currentCoordinates.mapY - 1) * HXP.height;
+            camera.scale = 0.05;
+            for(mapX in 0...4) {
+                for(mapY in 0...16) {
+                    loadLevel({mapX: 1000 + mapX, mapY: 1000 + mapY});
+                    levelToUnload = null;
+                }
+            }
+            camera.x = 1000 * Level.LEVEL_WIDTH;
+            camera.y = 1000 * Level.LEVEL_HEIGHT;
         }
         else {
             camera.scale = 1;

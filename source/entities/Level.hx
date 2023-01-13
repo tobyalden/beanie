@@ -10,7 +10,7 @@ import scenes.GameScene;
 
 class Level extends Entity
 {
-    public static inline var TILE_SIZE = 10;
+    public static inline var TILE_SIZE = 20;
     public static inline var LEVEL_WIDTH = 1920;
     public static inline var LEVEL_HEIGHT = 360;
 
